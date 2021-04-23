@@ -1,5 +1,4 @@
 from abc import ABC
-
 from scrapy import Request
 from scrapy.spiders import Spider
 from qidian_hot.items import QidianHotItem
@@ -12,21 +11,22 @@ class HotSalesSpider(Spider, ABC):
     current_page = 1
 
     # 设置用户代理
-    # qidian_headers = {
-    #     "User-Agent": "Mozilla/"
-    #     "5.0 (Macintosh;"
-    #     "Intel Mac OS X 10_15_7) AppleWebKit/"
-    #     "537.36 (KHTML, like Gecko) Chrome/"
-    #     "89.0.4389.114 Safari/"
-    #     "537.36"
-    # }
+    qidian_headers = {
+        "User-Agent": "Mozilla/"
+                      "5.0 (Macintosh;"
+                      "Intel Mac OS X 10_15_7) AppleWebKit/"
+                      "537.36 (KHTML, like Gecko) Chrome/"
+                      "89.0.4389.114 Safari/"
+                      "537.36"
+    }
+
     # 获取初始化Request
     def start_requests(self):
         # url = "https://www.qidian.com/rank/hotsales?page=5&style=1"
         url = "https://www.qidian.com/rank/hotsales?style=1"
         # 生成请求对象，设置url、headers、callback-制定回调函数
-        # yield Request(url, headers=self.qidian_headers, callback=self.qidian_parse)
-        yield Request(url, callback=self.qidian_parse)
+        yield Request(url, headers=self.qidian_headers, callback=self.qidian_parse)
+        # yield Request(url, callback=self.qidian_parse)
 
     # 起始的URL列表-存储目标网站地址-存放要爬取的目标网页地址的列表
     # start_urls = ['https://www.qidian.com/rank/hotsales?page=1&style=1',

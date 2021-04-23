@@ -5,9 +5,8 @@
 
 
 # useful for handling different item types with a single interface
-from itemadapter import ItemAdapter
 from scrapy.exceptions import DropItem
-
+import pymysql
 
 class QidianHotPipeline(object):
     def process_item(self, item, spider):
@@ -17,7 +16,6 @@ class QidianHotPipeline(object):
         else:
             item["form"] = "wanjie"
         return item
-
 
 class DuplicatesPipeline(object):
     def __init__(self):
@@ -33,7 +31,6 @@ class DuplicatesPipeline(object):
         else:
             self.author_set.add(item['author'])
         return item
-
 
 class SaveToTxtPipeline(object):
     file_name = "hot.txt"
@@ -66,3 +63,45 @@ class SaveToTxtPipeline(object):
     def close_file(self, spider):
         # 关闭文件
         self.file.close()
+
+class MySQLPipeline(object):
+    # Spider开启时，获取数据库配置信息，链接MySql服务器
+    def __init__(self):
+        db_name = 'qidian'
+        host = '8.131.57.6'
+        user = 'root'
+        pwd = 'Flzx3qcYsyhl9t'
+        self.conn = pymysql.connect(host=host, port=3306, user=user, password=pwd, db=db_name)
+        self.cursor = self.conn.cursor()
+
+    # def open_spider(self, spider):
+    #     # 获取配置文件中的MySQL配置信息
+    #     # db_name = spider.settings.get("MYSQL_DB_NAME", "qidian")
+    #     # host = spider.get("MYSQL_HOST", "8.131.57.6")
+    #     # user = spider.settings.get("MYSQL_USER", "root")
+    #     # pwd = spider.settings.get("MYSQL_PASSWORD", "Flzx3qcYsyhl9t")
+    #     # 链接MySQL数据库
+    #     # 创建连接
+    #     # 创建游标
+
+    # 将item实体类对象保存到数据库
+    def process_item(self, item, spider):
+        values = (
+            item['name'],
+            item['author'],
+            item['type'],
+            item['form']
+        )
+        # 设计插入数据库的SQL语句
+        sql = 'insert into hot(name, author, type, form)values (%s, %s, %s, %s)'
+        # 执行sql语句
+        self.cursor.execute(sql, values)
+        return item
+
+    def close_spider(self, spider):
+        # 提交数据
+        self.conn.commit()
+        # 关闭游标
+        self.cursor.close()
+        # 关闭数据库
+        self.conn.close()

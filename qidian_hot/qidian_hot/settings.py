@@ -9,11 +9,27 @@
 
 BOT_NAME = 'qidian_hot'
 
+FILE_NAME = "hot.txt"
+
 SPIDER_MODULES = ['qidian_hot.spiders']
 NEWSPIDER_MODULE = 'qidian_hot.spiders'
 
+# 数据库配置
+MYSQL_DB_NAME = "qidian"
+MYSQL_HOST = "8.131.57.6"
+MYSQL_USER = "root"
+MYSQL_PASSWORD = "Flzx3qcYsyhl9t"
+
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 # USER_AGENT = 'qidian_hot (+http://www.yourdomain.com)'
+qidian_headers = {
+    "User-Agent": "Mozilla/"
+    "5.0 (Macintosh;"
+    "Intel Mac OS X 10_15_7) AppleWebKit/"
+    "537.36 (KHTML, like Gecko) Chrome/"
+    "89.0.4389.114 Safari/"
+    "537.36"
+}
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
@@ -66,6 +82,7 @@ ITEM_PIPELINES = {
    'qidian_hot.pipelines.DuplicatesPipeline': 100,
    'qidian_hot.pipelines.QidianHotPipeline': 300,
    'qidian_hot.pipelines.SaveToTxtPipeline': 400,
+   'qidian_hot.pipelines.MySQLPipeline': 400       # 数据库项目管道
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
